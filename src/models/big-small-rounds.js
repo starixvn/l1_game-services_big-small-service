@@ -2,17 +2,17 @@ import mongoose from "mongoose";
 
 const resultSchema = new mongoose.Schema(
     {
-        dice1: { type: Boolean, required: true },
-        dice2: { type: Boolean, required: true },
-        dice3: { type: Boolean, required: true },
+        dice1: { type: Number, required: true },
+        dice2: { type: Number, required: true },
+        dice3: { type: Number, required: true },
     },
     { _id: false }
 );
 
 const settlementResultSchema = new mongoose.Schema(
     {
-        odd: { type: Boolean, default: false },
-        even: { type: Boolean, default: false },
+        big: { type: Boolean, default: false },
+        small: { type: Boolean, default: false },
     },
     { _id: false }
 );

@@ -1,9 +1,9 @@
 import mongoose from "mongoose";
 
-const Schema = new mongoose.Schema({
+const betLog = {
     uid: { type: String, required: true },
     name: { type: String, required: true },
-    phien: { type: Number, required: true, index: true },
+    phien: { type: Number, required: true },
 
     choice: { type: String, required: true },
     amount: { type: Number, required: true },
@@ -16,9 +16,12 @@ const Schema = new mongoose.Schema({
 
     memberId: { type: Number },
     siteId: { type: String },
-});
+};
 
-Schema.index({ uid: 1, phien: 1 }, { background: true });
+const bet = {
+    ...betLog,
+    totalAmount: { type: Number, default: 0 },
+};
 
-export const BigSmallBets = mongoose.model("TaiXiu_one", Schema);
-export const BigSmallBetLogs = mongoose.model("TaiXiu_cuoc", Schema);
+export const BigSmallBets = mongoose.model("TaiXiu_one", new mongoose.Schema(bet));
+export const BigSmallBetLogs = mongoose.model("TaiXiu_cuoc", new mongoose.Schema(betLog));
