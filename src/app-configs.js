@@ -42,7 +42,7 @@ export default {
     },
     sentry: {
         sentryUrl: "https://f48b8368b274490db3e4eaa01ba2b36b@sentry.lumigame.com/6",
-        logIdentifier: "mini-sicbo",
+        logIdentifier: "big-small",
         env: "LOCAL",
     },
     authenticateSettings: {

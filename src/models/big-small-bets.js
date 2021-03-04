@@ -20,5 +20,5 @@ const Schema = new mongoose.Schema({
 
 Schema.index({ uid: 1, phien: 1 }, { background: true });
 
-export const MiniSicBoBets = mongoose.model("TaiXiu_one", Schema);
-export const MiniSicBoBetLogs = mongoose.model("TaiXiu_cuoc", Schema);
+export const BigSmallBets = mongoose.model("TaiXiu_one", Schema);
+export const BigSmallBetLogs = mongoose.model("TaiXiu_cuoc", Schema);

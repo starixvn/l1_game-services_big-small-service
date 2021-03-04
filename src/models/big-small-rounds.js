@@ -24,4 +24,4 @@ const Schema = new mongoose.Schema({
     time: { type: Date, default: new Date() },
 });
 
-export const MiniSicBoRounds = mongoose.model("TaiXiu_phien", Schema);
+export const BigSmallRounds = mongoose.model("TaiXiu_phien", Schema);

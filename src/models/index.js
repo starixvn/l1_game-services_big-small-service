@@ -1,2 +1,2 @@
-export * from "./mini-sicbo-rounds";
-export * from "./mini-sicbo-bets";
+export * from "./big-small-rounds";
+export * from "./big-small-bets";
