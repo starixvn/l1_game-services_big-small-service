@@ -40,7 +40,7 @@ export default {
         },
     },
     sentry: {
-        sentryUrl: "http://82639a7dd711457c994b1a5326d796bc@10.99.99.187:800/225",
+        sentryUrl: "http://df6685e460c147e9809f21dd85bf4882@10.99.99.187:800/236",
         logIdentifier: "big-small",
         env: "UAT",
     },
