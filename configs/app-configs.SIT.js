@@ -40,7 +40,7 @@ export default {
         },
     },
     sentry: {
-        sentryUrl: "http://27c79b0b7bed4d0299d66d5963612695@10.99.99.187:800/224",
+        sentryUrl: "http://52368c4019044019885440599c180bda@10.99.99.187:800/24",
         logIdentifier: "big-small",
         env: "SIT",
     },
@@ -59,4 +59,8 @@ export default {
         "http://sitm.sabagame.com",
         "https://sitm.sabagame.com",
     ],
+    metrics: {
+        enable: true,
+        secretKey: "6c1f0f28-70f2-46ae-b031-22624a6cd8df",
+    },
 };

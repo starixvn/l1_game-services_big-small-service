@@ -41,15 +41,15 @@ export default {
         },
     },
     sentry: {
-        sentryUrl: "https://304fcee64d694a7ca7a0b15d9c8de27d@sentry.lumigame.com/9",
+        sentryUrl: "https://13f39b8359404ed5aec23655e64ccf78@sentry.lumigame.com/2",
         logIdentifier: "big-small",
-        env: "LOCAL",
+        env: "LOCAL-1",
     },
     authenticateSettings: {
         audiences: ["api", "admin-api"],
     },
     adminSecretKey: "asWDEerfOIdgsdqRTFabvmgh",
-    enableCorsWs: true,
+    enableCorsWs: false,
     corsUrls: [
         "http://localhost:7456",
         "http://localhost:7000",
@@ -60,4 +60,8 @@ export default {
         "http://l1-m1.lumigame.com",
         "https://l1-m1.lumigame.com",
     ],
+    metrics: {
+        enable: true,
+        secretKey: "6c1f0f28-70f2-46ae-b031-22624a6cd8df",
+    },
 };
