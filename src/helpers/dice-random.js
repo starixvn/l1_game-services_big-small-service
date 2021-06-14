@@ -1,6 +1,6 @@
 import Chance from "chance";
 import Random from "random";
-import RandomJS from "random-js";
+import { MersenneTwister19937, Random as RandomJS } from "random-js";
 
 const random1 = () => {
     const chance = new Chance();
@@ -21,7 +21,8 @@ const random4 = () => {
 };
 
 const random5 = () => {
-    const randomJS = new RandomJS.Random(MersenneTwister19937.autoSeed());
+    const randomJS = new RandomJS(MersenneTwister19937.autoSeed());
+
     return randomJS.integer(1, 6);
 };
 
