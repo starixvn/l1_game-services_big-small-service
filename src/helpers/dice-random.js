@@ -20,8 +20,8 @@ const random4 = () => {
 };
 
 const random5 = () => {
-    const random = new RandomJS.Random(MersenneTwister19937.autoSeed());
-    return random.integer(1, 6);
+    const randomJS = new RandomJS.Random(MersenneTwister19937.autoSeed());
+    return randomJS.integer(1, 6);
 };
 
 const randomFunctions = [random1, random2, random3, random4, random5];
