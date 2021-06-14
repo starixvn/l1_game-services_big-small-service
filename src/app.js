@@ -2,7 +2,7 @@ import { Core } from "sc-game-base";
 import { GameData } from "sc-pool-betting-game-base";
 
 import appConfigs from "./app-configs";
-import BigSmallContainerRegistry from "./container-registry";
+import BigSmallContainerRegistry from "./big-small-container-registry";
 import gameSettings from "./game-settings";
 import { generateResult, getSettlementResult } from "./helpers";
 

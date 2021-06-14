@@ -3,7 +3,8 @@ import Random from "random";
 import RandomJS from "random-js";
 
 const random1 = () => {
-    return Math.floor(Math.random() * 6) + 1;
+    const chance = new Chance();
+    return Math.floor(chance.integer({ min: 0, max: 1 }) * 6) + 1;
 };
 const random2 = () => {
     const chance = new Chance();
@@ -27,8 +28,8 @@ const random5 = () => {
 const randomFunctions = [random1, random2, random3, random4, random5];
 
 export const random = () => {
-    const selectedRandomMethodIndex = Math.floor(Math.random() * (randomFunctions.length - 1));
-    const randomFunction = randomFunctions[selectedRandomMethodIndex];
+    const chance = new Chance();
+    const randomFunction = chance.pickone(randomFunctions);
 
     return randomFunction();
 };
