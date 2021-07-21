@@ -1,3 +1,5 @@
+import { random } from "./dice-random";
+
 const settlementRuleEntries = Object.entries({
     big: (totalPoints) => totalPoints > 10,
     small: (totalPoints) => totalPoints <= 10,
@@ -11,4 +13,12 @@ export const getSettlementResult = (roundResult) => {
 
         return result;
     }, {});
-}
+};
+
+export const generateResult = () => {
+    const dice1 = random();
+    const dice2 = random();
+    const dice3 = random();
+
+    return { dice1, dice2, dice3 };
+};
