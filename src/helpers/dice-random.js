@@ -3,9 +3,7 @@ import Random from "random";
 import { MersenneTwister19937, Random as RandomJS } from "random-js";
 
 export const random1 = () => {
-    const chance = new Chance();
-
-    return Math.max(1, Math.floor(chance.floating({ min: 0, max: 1 }) * 6));
+    return Math.floor(Math.random() * 6) + 1;
 };
 export const random2 = () => {
     const chance = new Chance();
@@ -30,8 +28,8 @@ export const random5 = () => {
 const randomFunctions = [random1, random2, random3, random4, random5];
 
 export const random = () => {
-    const chance = new Chance();
-    const randomFunction = chance.pickone(randomFunctions);
+    const selectedRandomMethodIndex = Math.floor(Math.random() * (randomFunctions.length - 1));
+    const randomFunction = randomFunctions[selectedRandomMethodIndex];
 
     return randomFunction();
 };
