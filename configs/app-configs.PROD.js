@@ -67,6 +67,10 @@ export default {
         "https://m.sabagame.com",
         "http://m.gamesaba.com",
         "https://m.gamesaba.com",
+        "http://mini.sabagame.com",
+        "https://mini.sabagame.com",
+        "http://mini.gamesaba.com",
+        "https://mini.gamesaba.com",
     ],
     metrics: {
         enable: true,

@@ -58,6 +58,8 @@ export default {
         "https://sit-adm.sabagame.com",
         "http://sitm.sabagame.com",
         "https://sitm.sabagame.com",
+        "http://minisit.sgamesuat.com",
+        "https://minisit.sgamesuat.com",
     ],
     metrics: {
         enable: true,
