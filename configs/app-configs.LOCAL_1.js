@@ -59,6 +59,8 @@ export default {
         "http://l1-admin1.lumigame.com",
         "http://l1-m1.lumigame.com",
         "https://l1-m1.lumigame.com",
+        "http://l1-mini1.lumigame.com",
+        "https://l1-mini1.lumigame.com",
     ],
     metrics: {
         enable: true,
