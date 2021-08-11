@@ -41,7 +41,7 @@ export default {
         },
     },
     sentry: {
-        sentryUrl: "http://58fc00e79ab34a3bab04a79038760cb8@10.99.99.187:803/8",
+        sentryUrl: "http://58fc00e79ab34a3bab04a79038760cb8@10.2.189.50:9009/8",
         logIdentifier: "big-small",
         env: "PROD",
     },
@@ -67,6 +67,10 @@ export default {
         "https://m.sabagame.com",
         "http://m.gamesaba.com",
         "https://m.gamesaba.com",
+        "http://mini.sabagame.com",
+        "https://mini.sabagame.com",
+        "http://mini.gamesaba.com",
+        "https://mini.gamesaba.com",
     ],
     metrics: {
         enable: true,
