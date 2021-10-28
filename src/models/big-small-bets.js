@@ -20,6 +20,9 @@ const betLog = {
 
     memberId: { type: Number },
     siteId: { type: String },
+    currency: { type: String, require: true },
+    rate: { type: Number, require: true },
+    partnerId: { type: String, require: true },
 };
 
 const bet = {
