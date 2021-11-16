@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testExecutions version="1">
+    <file path="D:\Git3\L1\game-services\big-small-service\src\helpers\__tests__\result-helper.test.js">
+        <testCase name="getSettlementResult tests should return big if the total of points is greater than 10" duration="9"/>
+        <testCase name="getSettlementResult tests should return small if the total of points is less than or equal 10" duration="1"/>
+        <testCase name="generateResult tests should return enough results" duration="6"/>
+    </file>
+    <file path="D:\Git3\L1\game-services\big-small-service\src\helpers\__tests__\dice-random.test.js">
+        <testCase name="random functions tests random1 should return correct value of dice" duration="5"/>
+        <testCase name="random functions tests random2 should return correct value of dice" duration="7"/>
+        <testCase name="random functions tests random3 should return correct value of dice" duration="4"/>
+        <testCase name="random functions tests random4 should return correct value of dice" duration="2"/>
+        <testCase name="random functions tests random5 should return correct value of dice" duration="4"/>
+    </file>
+</testExecutions>
