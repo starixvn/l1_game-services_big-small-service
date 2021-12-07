@@ -1,3 +1,6 @@
+variables:
+  SMOKE_PRODUCT_NAME: BigSmall
+
 include:
   - project: "ci/repos-ci/pentagon_l1_big_small_service"
     ref: master

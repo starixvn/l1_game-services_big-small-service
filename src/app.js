@@ -10,9 +10,9 @@ const run = async () => {
     const gameData = new GameData(gameSettings.durations.wholeRound);
     const definition = new Core.GameDefinition(gameSettings, generateResult, getSettlementResult);
     const container = new BigSmallContainerRegistry().register(appConfigs, definition, gameData);
-    const app = new Core.BaseGameApp(container);
-
+    const app = new Core.BaseGameApp("BigSmall", appConfigs);
     await app.run();
+    await app.startGame(container);
 };
 
 run();
