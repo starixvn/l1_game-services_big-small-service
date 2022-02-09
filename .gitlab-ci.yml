@@ -32,13 +32,12 @@ integration-tests:
   before_script:
     - cp ./src/app-configs.js ./src/app-configs.original.js
     - cp ./configs/app-configs.IGT.js ./src/app-configs.js
-    - npm set registry http://npm.lumigame.com
+    - npm set registry https://npm.lumigame.com
     - yarn install
-    - npm run test-:-integration-:-setup-test-data
-    - nohup npm run test-:-integration-:-start-service &
+    
 
   script:
-    - npm run test-:-integration-:-start-test
+    - npm run integration-test
 
   rules:
     - <<: *if-deploy-local

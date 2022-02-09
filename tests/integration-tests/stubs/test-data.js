@@ -19,6 +19,50 @@ const gameConfig = {
     odds: { big: 1.97, small: 1.97 },
 };
 
+const userBetData = (uid) => {
+    return [
+        {
+            phien: 823211,
+            uid: uid,
+            betwin: 0,
+            currency: "$US",
+            amount: 100,
+            baseAmount: 100,
+            baseBetWin: 0,
+            baseRefund: 0,
+            baseTotalWin: 0,
+            choice: "big",
+            memberId: 1,
+            name: "NormalUser",
+            partnerId: "dummy-partner-id",
+            rate: 1,
+            siteId: "111",
+            thanhtoan: true,
+            win: false,
+        },
+        {
+            freeBet: false,
+            phien: 823211,
+            uid: uid,
+            betwin: 0,
+            currency: "$US",
+            amount: 100,
+            baseAmount: 100,
+            baseBetWin: 0,
+            baseRefund: 0,
+            baseTotalWin: 0,
+            choice: "small",
+            memberId: 4,
+            name: "NormalUser",
+            partnerId: "dummy-partner-id",
+            rate: 1,
+            siteId: "111",
+            thanhtoan: true,
+            win: false,
+        },
+    ];
+};
+
 const rounds = [
     {
         id: 823209,
@@ -37,4 +81,4 @@ const rounds = [
     },
 ];
 
-export { game, currencyData, socketOptions, gameConfig, rounds };
+export { game, currencyData, socketOptions, gameConfig, rounds, userBetData };
