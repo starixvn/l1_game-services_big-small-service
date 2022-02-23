@@ -1,6 +1,6 @@
 import Chance from "chance";
 
-import { generateResult, getSettlementResult } from "../result-helper";
+import { generateResult, getSettlementResult } from "../../../src/helpers";
 
 describe("getSettlementResult tests", () => {
     const chance = new Chance();
