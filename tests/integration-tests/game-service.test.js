@@ -1,4 +1,3 @@
-import { spawn } from "child_process";
 import {
     endGameErrorUser,
     errorUser,
@@ -8,36 +7,12 @@ import {
 } from "sc-game-service-integration-utils";
 
 import { currencyData, socketOptions } from "./stubs/test-data";
+import { startServiceProcess, startSetupDataProcess } from "./stubs/test-jobs";
+
+startSetupDataProcess();
+let processStartService;
 
 const JEST_ASSERT_WAITING_RESPONSE_TIMEOUT = 70000;
-
-const setupTestDataJob = spawn("node", ["--es-module-specifier-resolution=node", "./tests/integration-tests/stubs/test-data-setup.js"]);
-setupTestDataJob.stdout.on("data", (data) => {
-    console.log(`stdout: ${data}`);
-});
-
-setupTestDataJob.stderr.on("data", (data) => {
-    console.log(`stderr: ${data}`);
-});
-setupTestDataJob.on("close", (code) => {
-    console.log(`child process exited with code ${code}`);
-});
-
-const processStartService = spawn("node", [
-    "--es-module-specifier-resolution=node",
-    "./tests/integration-tests/game-service-setup/game-service-app.js",
-    {
-        stdio: [null, null, null, "ipc"],
-    },
-]);
-
-processStartService.stdout.on("data", (data) => {
-    console.log(`stdout: ${data}`);
-});
-
-processStartService.stderr.on("data", (data) => {
-    console.log(`stderr: ${data}`);
-});
 
 let normalUserClientDriver;
 let errorUserClientDriver;
@@ -45,9 +20,11 @@ let internalServerErrorUserClientDriver;
 let endGameErrorUserClientDriver;
 
 beforeAll(async (done) => {
-    setTimeout(() => {
-        // set timeout for jest, waiting for socket response
-        jest.setTimeout(JEST_ASSERT_WAITING_RESPONSE_TIMEOUT);
+    jest.setTimeout(JEST_ASSERT_WAITING_RESPONSE_TIMEOUT);
+
+    processStartService = startServiceProcess(() => {
+        console.log("Start service job done!");
+
         normalUserClientDriver = new GameClientDriver(socketOptions, initUserSession(normalUser));
 
         errorUserClientDriver = new GameClientDriver(socketOptions, initUserSession(errorUser));
@@ -66,8 +43,8 @@ beforeAll(async (done) => {
         });
 
         done();
-    }, 20000);
-}, 21000);
+    });
+});
 
 afterAll(() => {
     normalUserClientDriver.close();
@@ -237,6 +214,7 @@ describe("BigSmall Service", () => {
         describe("when place bet successful", () => {
             beforeAll(async (done) => {
                 // Act
+                await new Promise((r) => setTimeout(r, 10000));
                 await normalUserClientDriver.sendBetEvent(betChoice, amount);
                 done();
             });
@@ -281,7 +259,6 @@ describe("BigSmall Service", () => {
                 // Assert
                 errorUserClientDriver.handleEndBetEvent((endBetData) => {
                     if (endBetData.endBet === -1) {
-                        console.log(endBetData);
                         expect(endBetData.betChoice).toEqual("big");
                         expect(endBetData.apiError.errorCode).toEqual(3002);
                         expect(endBetData.apiError.isPlaceBetFailed).toEqual(true);
