@@ -1,7 +1,7 @@
 import { asValue } from "awilix";
 import { ContainerRegistry } from "sc-pool-betting-game-base";
 
-import { BigSmallBetLogs, BigSmallBets, BigSmallRounds } from "./models";
+import { BigSmallBetLogs, BigSmallBets, BigSmallMD5s, BigSmallRounds } from "./models";
 
 export default class BigSmallContainerRegistry extends ContainerRegistry {
     registerModels() {
@@ -11,6 +11,7 @@ export default class BigSmallContainerRegistry extends ContainerRegistry {
             roundsRepository: asValue(BigSmallRounds),
             betsRepository: asValue(BigSmallBets),
             betLogsRepository: asValue(BigSmallBetLogs),
+            md5sRepository: asValue(BigSmallMD5s),
         });
     }
 }
