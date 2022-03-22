@@ -34,7 +34,7 @@ export default {
     database: {
         url: "mongodb://localhost:27017",
         options: {
-            dbName: "minigame",
+            dbName: "game-service-test",
             useNewUrlParser: true,
             useUnifiedTopology: true,
             auto_reconnect: true,
@@ -51,4 +51,5 @@ export default {
     adminSecretKey: "asWDEerfOIdgsdqRTFabvmgh",
     enableCorsWs: false,
     corsUrls: ["http://localhost:7456", "http://localhost:7000", "http://games.lumigame.com", "http://admin.lumigame.com"],
+    enableMsgpackParser: false,
 };
