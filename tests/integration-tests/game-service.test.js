@@ -9,7 +9,6 @@ import {
 import { currencyData, socketOptions } from "./stubs/test-data";
 import { startServiceProcess, startSetupDataProcess } from "./stubs/test-jobs";
 
-startSetupDataProcess();
 let processStartService;
 
 const JEST_ASSERT_WAITING_RESPONSE_TIMEOUT = 70000;
@@ -20,29 +19,30 @@ let internalServerErrorUserClientDriver;
 let endGameErrorUserClientDriver;
 
 beforeAll(async (done) => {
-    jest.setTimeout(JEST_ASSERT_WAITING_RESPONSE_TIMEOUT);
+    startSetupDataProcess(() => {
+        jest.setTimeout(JEST_ASSERT_WAITING_RESPONSE_TIMEOUT);
+        processStartService = startServiceProcess(() => {
+            console.log("Start service job done!");
 
-    processStartService = startServiceProcess(() => {
-        console.log("Start service job done!");
+            normalUserClientDriver = new GameClientDriver(socketOptions, initUserSession(normalUser));
 
-        normalUserClientDriver = new GameClientDriver(socketOptions, initUserSession(normalUser));
+            errorUserClientDriver = new GameClientDriver(socketOptions, initUserSession(errorUser));
+            errorUserClientDriver.handleSignedInEvent(() => {
+                errorUserClientDriver.sendInGameEvent();
+            });
 
-        errorUserClientDriver = new GameClientDriver(socketOptions, initUserSession(errorUser));
-        errorUserClientDriver.handleSignedInEvent(() => {
-            errorUserClientDriver.sendInGameEvent();
+            internalServerErrorUserClientDriver = new GameClientDriver(socketOptions, initUserSession(internalServerErrorUser));
+            internalServerErrorUserClientDriver.handleSignedInEvent(() => {
+                internalServerErrorUserClientDriver.sendInGameEvent();
+            });
+
+            endGameErrorUserClientDriver = new GameClientDriver(socketOptions, initUserSession(endGameErrorUser));
+            endGameErrorUserClientDriver.handleSignedInEvent(() => {
+                endGameErrorUserClientDriver.sendInGameEvent();
+            });
+
+            done();
         });
-
-        internalServerErrorUserClientDriver = new GameClientDriver(socketOptions, initUserSession(internalServerErrorUser));
-        internalServerErrorUserClientDriver.handleSignedInEvent(() => {
-            internalServerErrorUserClientDriver.sendInGameEvent();
-        });
-
-        endGameErrorUserClientDriver = new GameClientDriver(socketOptions, initUserSession(endGameErrorUser));
-        endGameErrorUserClientDriver.handleSignedInEvent(() => {
-            endGameErrorUserClientDriver.sendInGameEvent();
-        });
-
-        done();
     });
 });
 
@@ -121,10 +121,11 @@ describe("BigSmall Service", () => {
             });
         });
 
-        it("should return user information", () => {
+        it("should return user information", (done) => {
             // Assert
             normalUserClientDriver.handleInGameEvent((inGameData) => {
                 if (inGameData?.user?.UID) {
+                    console.log(inGameData);
                     expect(inGameData.user).toStrictEqual(expectedUser);
 
                     done();
