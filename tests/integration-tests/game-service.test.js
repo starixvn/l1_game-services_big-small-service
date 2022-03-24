@@ -212,6 +212,7 @@ describe("BigSmall Service", () => {
         describe("when place bet successful", () => {
             beforeAll(async (done) => {
                 // Act
+                await new Promise((r) => setTimeout(r, 10000));
                 await normalUserClientDriver.sendBetEvent(betChoice, amount);
                 done();
             });
@@ -247,6 +248,7 @@ describe("BigSmall Service", () => {
         describe("when get error response from api", () => {
             beforeAll(async (done) => {
                 // Act
+                await new Promise((r) => setTimeout(r, 10000));
                 await errorUserClientDriver.sendBetEvent(betChoice, amount);
                 done();
             });
