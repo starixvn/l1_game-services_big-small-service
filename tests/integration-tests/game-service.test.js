@@ -1,10 +1,4 @@
-import {
-    endGameErrorUser,
-    errorUser,
-    GameClientDriver,
-    internalServerErrorUser,
-    normalUser,
-} from "sc-game-service-integration-utils";
+import { endGameErrorUser, errorUser, GameClientDriver, internalServerErrorUser, normalUser } from "sc-game-service-integration-utils";
 
 import { currencyData, socketOptions } from "./stubs/test-data";
 import { startServiceProcess, startSetupDataProcess } from "./stubs/test-jobs";
@@ -19,8 +13,8 @@ let internalServerErrorUserClientDriver;
 let endGameErrorUserClientDriver;
 
 beforeAll((done) => {
+    jest.setTimeout(JEST_ASSERT_WAITING_RESPONSE_TIMEOUT);
     startSetupDataProcess(() => {
-        jest.setTimeout(JEST_ASSERT_WAITING_RESPONSE_TIMEOUT);
         processStartService = startServiceProcess(() => {
             normalUserClientDriver = new GameClientDriver(socketOptions, initUserSession(normalUser));
 
