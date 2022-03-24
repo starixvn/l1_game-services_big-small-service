@@ -27,6 +27,7 @@ sonarqube-check:
 integration-tests:
   stage: test
   needs: ['unit-test-js']
+  when: on_failure
   tags:
     - docker
 
