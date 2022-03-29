@@ -27,6 +27,8 @@ const clearAllData = async () => {
     for (const collection of collections) {
         await collection.remove();
     }
+
+    console.log("clear all data");
 };
 
 const createTestData = async () => {

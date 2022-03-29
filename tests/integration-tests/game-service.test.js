@@ -1,11 +1,12 @@
 import { GameClientDriver, internalServerErrorUser, normalUser } from "sc-game-service-integration-utils";
 
+import gameSettings from "../../src/game-settings";
 import { currencyData, socketOptions } from "./stubs/test-data";
 import { startServiceProcess, startSetupDataProcess } from "./stubs/test-jobs";
 
 let processStartService;
 
-const JEST_ASSERT_WAITING_RESPONSE_TIMEOUT = 70000;
+const JEST_ASSERT_WAITING_RESPONSE_TIMEOUT = 100000;
 
 beforeAll((done) => {
     jest.setTimeout(JEST_ASSERT_WAITING_RESPONSE_TIMEOUT);
@@ -22,38 +23,257 @@ afterAll(() => {
 });
 
 describe("BigSmall Service", () => {
-    describe("when API has internal server error", () => {
-        let internalServerErrorUserClientDriver;
+    describe("when user join game", () => {
+        let driver;
         beforeAll((done) => {
-            internalServerErrorUserClientDriver = new GameClientDriver(socketOptions, initUserSession(internalServerErrorUser));
-            internalServerErrorUserClientDriver.handleSignedInEvent(() => {
-                internalServerErrorUserClientDriver.sendInGameEvent();
+            driver = new GameClientDriver(socketOptions, initUserSession(normalUser));
+            driver.handleSignedInEvent(() => {
+                done();
             });
-            internalServerErrorUserClientDriver.handleInGameEvent((inGameData) => {
+        });
+
+        afterAll(() => {
+            driver.close();
+        });
+
+        // Arrange
+        const expectedGameConfigs = {
+            minBet: 1,
+            maxBet: 2000,
+            odds: { big: 1.97, small: 1.97 },
+        };
+
+        const expectedUser = {
+            UID: 1,
+            avatarId: 1,
+            currency: "$US",
+            name: "NormalUser",
+            rate: 1,
+            red: 25000,
+        };
+
+        const expectedRoundHistory = [
+            {
+                roundId: 823211,
+                result: { dice1: 1, dice2: 5, dice3: 3 },
+                settlementResult: { big: false, small: true },
+            },
+            {
+                roundId: 823210,
+                result: { dice1: 4, dice2: 4, dice3: 1 },
+                settlementResult: { big: false, small: true },
+            },
+            {
+                roundId: 823209,
+                result: { dice1: 1, dice2: 2, dice3: 6 },
+                settlementResult: { big: false, small: true },
+            },
+        ];
+
+        it("should return game configuration (odds, min bet, max bet)", (done) => {
+            // Act
+            driver.sendInGameEvent();
+
+            // Assert
+            driver.handleInGameEvent((inGameData) => {
                 if (inGameData?.gameConfigs) {
+                    if (inGameData.gameConfigs) {
+                        expect(inGameData.gameConfigs.minBet).toEqual(expectedGameConfigs.minBet);
+                        expect(inGameData.gameConfigs.maxBet).toEqual(expectedGameConfigs.maxBet);
+                        expect(inGameData.gameConfigs.odds).toStrictEqual(expectedGameConfigs.odds);
+
+                        done();
+                    }
+                }
+            });
+        });
+
+        it("should return user information", (done) => {
+            // Act
+            driver.sendInGameEvent();
+
+            // Assert
+            driver.handleInGameEvent((inGameData) => {
+                if (inGameData?.user?.UID) {
+                    expect(inGameData.user).toStrictEqual(expectedUser);
+
                     done();
                 }
             });
         });
 
-        afterAll(() => {
-            internalServerErrorUserClientDriver.close();
+        it("should return old round history", (done) => {
+            // Act
+            driver.sendInGameEvent();
+
+            // Assert
+            driver.handleInGameEvent((inGameData) => {
+                if (inGameData?.roundHistory) {
+                    expect(inGameData.roundHistory).toStrictEqual(expectedRoundHistory);
+                    done();
+                }
+            });
+        });
+    });
+
+    describe("when user view bet history", () => {
+        let driver;
+        beforeAll((done) => {
+            driver = new GameClientDriver(socketOptions, initUserSession(normalUser));
+            driver.handleSignedInEvent(() => {
+                done();
+            });
         });
 
-        describe("when user place bet", () => {
-            // Arrange
-            const betChoice = "big";
-            const amount = 100;
+        afterAll(() => {
+            driver.close();
+        });
 
-            beforeAll(async (done) => {
-                // Act
-                await internalServerErrorUserClientDriver.sendBetEvent(betChoice, amount);
-                done();
+        it("should return bet history", (done) => {
+            // Arrange
+            const expectedData = [
+                {
+                    refund: 0,
+                    baseRefund: 0,
+                    win: false,
+                    betwin: 0,
+                    baseBetWin: 0,
+                    totalWin: 0,
+                    baseTotalWin: 0,
+                    totalAmount: 0,
+                    phien: 823211,
+                    currency: "$US",
+                    amount: 100,
+                    baseAmount: 100,
+                    choice: "small",
+                    name: "NormalUser",
+                    partnerId: "dummy-partner-id",
+                    rate: 1,
+                    betLogDetails: [],
+                },
+                {
+                    refund: 0,
+                    baseRefund: 0,
+                    win: false,
+                    betwin: 0,
+                    baseBetWin: 0,
+                    totalWin: 0,
+                    baseTotalWin: 0,
+                    totalAmount: 0,
+                    phien: 823211,
+                    currency: "$US",
+                    amount: 100,
+                    baseAmount: 100,
+                    choice: "big",
+                    name: "NormalUser",
+                    partnerId: "dummy-partner-id",
+                    rate: 1,
+                    betLogDetails: [],
+                },
+            ];
+
+            // Act
+            driver.sendGetHistoryEvent();
+
+            // Assert
+            driver.handleGetHistoryEvent((betHistoryData) => {
+                if (betHistoryData?.history) {
+                    const actualBetLogs = betHistoryData.history.betLogs.map((betLog) => {
+                        delete betLog.result;
+                        delete betLog.settlementResult;
+                        return betLog;
+                    });
+
+                    expect(actualBetLogs).toEqual(expectedData);
+                    done();
+                }
+            });
+        });
+    });
+
+    describe("when user place bet", () => {
+        // Arrange
+        const betChoice = "big";
+        const amount = 100;
+
+        describe("when place bet successful", () => {
+            let driver;
+            beforeAll((done) => {
+                driver = new GameClientDriver(socketOptions, initUserSession(normalUser));
+                driver.handleSignedInEvent(() => {
+                    driver.sendInGameEvent();
+                });
+                driver.handleInGameEvent((inGameData) => {
+                    if (inGameData.gameConfigs && inGameData.remainingTime) {
+                        setTimeout(() => {
+                            console.log("sendInGameEvent");
+                            driver.sendBetEvent(betChoice, amount);
+                        }, getTimeOutToBet(inGameData.remainingTime, gameSettings.durations) * 1000);
+
+                        done();
+                    }
+                });
+            });
+
+            afterAll(() => {
+                driver.close();
+            });
+
+            it("should return current user ticket result", (done) => {
+                const expectedEndBetResponse = {
+                    ownBets: { big: 100 },
+                    endBet: 100,
+                    betChoice: "big",
+                    freeBet: false,
+                    user: { maxBet: 2000, minBet: 1, red: 24250, scoins: 0 },
+                };
+
+                // Assert
+                driver.handleEndBetEvent((endBetData) => {
+                    if (endBetData.endBet) {
+                        expect(endBetData).toStrictEqual(expectedEndBetResponse);
+                        done();
+                    }
+                });
+            });
+
+            it("should return ticket status when end game", (done) => {
+                // Assert
+                driver.handleEndBetEvent((endGameResult) => {
+                    if (endGameResult.status) {
+                        done();
+                    }
+                });
+            });
+        });
+
+        describe("when API has internal server error", () => {
+            let driver;
+            beforeAll((done) => {
+                driver = new GameClientDriver(socketOptions, initUserSession(internalServerErrorUser));
+                driver.handleSignedInEvent(() => {
+                    console.log("sendInGameEvent");
+                    driver.sendInGameEvent();
+                });
+                driver.handleInGameEvent((inGameData) => {
+                    if (inGameData?.gameConfigs && inGameData.remainingTime) {
+                        console.log(inGameData.remainingTime);
+                        setTimeout(() => {
+                            console.log("sendBetEvent");
+                            driver.sendBetEvent(betChoice, amount);
+                        }, getTimeOutToBet(inGameData.remainingTime, gameSettings.durations) * 1000);
+                        done();
+                    }
+                });
+            });
+
+            afterAll(() => {
+                driver.close();
             });
 
             it("should return api error to client", () => {
                 // Assert
-                internalServerErrorUserClientDriver.handleEndBetEvent((endBetData) => {
+                driver.handleEndBetEvent((endBetData) => {
                     if (endBetData.endBet === -1) {
                         expect(endBetData.betChoice).toEqual("big");
                         expect(endBetData.apiError.errorCode).toEqual("SB1900");
@@ -65,253 +285,296 @@ describe("BigSmall Service", () => {
         });
     });
 
-    describe("When API response error", () => {
-        let errorUserClientDriver;
-        beforeAll((done) => {
-            errorUserClientDriver = new GameClientDriver(socketOptions, initUserSession(internalServerErrorUser));
-            errorUserClientDriver.handleSignedInEvent(() => {
-                errorUserClientDriver.sendInGameEvent();
-            });
-            errorUserClientDriver.handleInGameEvent((inGameData) => {
-                if (inGameData?.gameConfigs) {
-                    done();
-                }
-            });
-        });
+    // describe("when API has internal server error", () => {
+    //     let internalServerErrorUserClientDriver;
+    //     beforeAll((done) => {
+    //         internalServerErrorUserClientDriver = new GameClientDriver(socketOptions, initUserSession(internalServerErrorUser));
+    //         internalServerErrorUserClientDriver.handleSignedInEvent(() => {
+    //             internalServerErrorUserClientDriver.sendInGameEvent();
+    //         });
+    //         internalServerErrorUserClientDriver.handleInGameEvent((inGameData) => {
+    //             if (inGameData?.gameConfigs) {
+    //                 done();
+    //             }
+    //         });
+    //     });
 
-        afterAll(() => {
-            errorUserClientDriver.close();
-        });
+    //     afterAll(() => {
+    //         internalServerErrorUserClientDriver.close();
+    //     });
 
-        describe("when user place bet", () => {
-            // Arrange
-            const betChoice = "big";
-            const amount = 100;
+    //     describe("when user place bet", () => {
+    //         // Arrange
+    //         const betChoice = "big";
+    //         const amount = 100;
 
-            beforeAll(async (done) => {
-                // Act
-                await errorUserClientDriver.sendBetEvent(betChoice, amount);
-                done();
-            });
+    //         beforeAll(async (done) => {
+    //             // Act
+    //             await internalServerErrorUserClientDriver.sendBetEvent(betChoice, amount);
+    //             done();
+    //         });
 
-            it("should return api error to client", () => {
-                // Assert
-                errorUserClientDriver.handleEndBetEvent((endBetData) => {
-                    if (endBetData.endBet === -1) {
-                        expect(endBetData.betChoice).toEqual("big");
-                        expect(endBetData.apiError.errorCode).toEqual(3002);
-                        expect(endBetData.apiError.isPlaceBetFailed).toEqual(true);
-                        done();
-                    }
-                });
-            });
-        });
-    });
+    //         it("should return api error to client", () => {
+    //             // Assert
+    //             internalServerErrorUserClientDriver.handleEndBetEvent((endBetData) => {
+    //                 if (endBetData.endBet === -1) {
+    //                     expect(endBetData.betChoice).toEqual("big");
+    //                     expect(endBetData.apiError.errorCode).toEqual("SB1900");
+    //                     expect(endBetData.apiError.isPlaceBetFailed).toEqual(true);
+    //                     done();
+    //                 }
+    //             });
+    //         });
+    //     });
+    // });
 
-    describe("When API is normal", () => {
-        let normalUserClientDriver;
-        beforeAll(() => {
-            normalUserClientDriver = new GameClientDriver(socketOptions, initUserSession(normalUser));
-        });
+    // describe("When API response error", () => {
+    //     let errorUserClientDriver;
+    //     beforeAll((done) => {
+    //         errorUserClientDriver = new GameClientDriver(socketOptions, initUserSession(internalServerErrorUser));
+    //         errorUserClientDriver.handleSignedInEvent(() => {
+    //             errorUserClientDriver.sendInGameEvent();
+    //         });
+    //         errorUserClientDriver.handleInGameEvent((inGameData) => {
+    //             if (inGameData?.gameConfigs) {
+    //                 done();
+    //             }
+    //         });
+    //     });
 
-        afterAll(() => {
-            normalUserClientDriver.close();
-        });
+    //     afterAll(() => {
+    //         errorUserClientDriver.close();
+    //     });
 
-        describe("when sign in successful", () => {
-            it("should receive signed in response", (done) => {
-                // Assert
-                normalUserClientDriver.handleSignedInEvent(() => {
-                    done();
-                });
-            });
-        });
+    //     describe("when user place bet", () => {
+    //         // Arrange
+    //         const betChoice = "big";
+    //         const amount = 100;
 
-        describe("when user joins game", () => {
-            // Arrange
-            const expectedGameConfigs = {
-                minBet: 1,
-                maxBet: 2000,
-                odds: { big: 1.97, small: 1.97 },
-            };
+    //         beforeAll(async (done) => {
+    //             // Act
+    //             await errorUserClientDriver.sendBetEvent(betChoice, amount);
+    //             done();
+    //         });
 
-            const expectedUser = {
-                UID: 1,
-                avatarId: 1,
-                currency: "$US",
-                name: "NormalUser",
-                rate: 1,
-                red: 25000,
-            };
+    //         it("should return api error to client", () => {
+    //             // Assert
+    //             errorUserClientDriver.handleEndBetEvent((endBetData) => {
+    //                 if (endBetData.endBet === -1) {
+    //                     expect(endBetData.betChoice).toEqual("big");
+    //                     expect(endBetData.apiError.errorCode).toEqual(3002);
+    //                     expect(endBetData.apiError.isPlaceBetFailed).toEqual(true);
+    //                     done();
+    //                 }
+    //             });
+    //         });
+    //     });
+    // });
 
-            const expectedRoundHistory = [
-                {
-                    roundId: 823211,
-                    result: { dice1: 1, dice2: 5, dice3: 3 },
-                    settlementResult: { big: false, small: true },
-                },
-                {
-                    roundId: 823210,
-                    result: { dice1: 4, dice2: 4, dice3: 1 },
-                    settlementResult: { big: false, small: true },
-                },
-                {
-                    roundId: 823209,
-                    result: { dice1: 1, dice2: 2, dice3: 6 },
-                    settlementResult: { big: false, small: true },
-                },
-            ];
+    // describe("When API is normal", () => {
+    //     let normalUserClientDriver;
+    //     beforeAll(() => {
+    //         normalUserClientDriver = new GameClientDriver(socketOptions, initUserSession(normalUser));
+    //     });
 
-            it("should return game configuration (odds, min bet, max bet)", (done) => {
-                // Act
-                normalUserClientDriver.sendInGameEvent();
+    //     afterAll(() => {
+    //         normalUserClientDriver.close();
+    //     });
 
-                // Assert
-                normalUserClientDriver.handleInGameEvent((inGameData) => {
-                    if (inGameData?.gameConfigs) {
-                        if (inGameData.gameConfigs) {
-                            expect(inGameData.gameConfigs.minBet).toEqual(expectedGameConfigs.minBet);
-                            expect(inGameData.gameConfigs.maxBet).toEqual(expectedGameConfigs.maxBet);
-                            expect(inGameData.gameConfigs.odds).toStrictEqual(expectedGameConfigs.odds);
+    //     describe("when sign in successful", () => {
+    //         it("should receive signed in response", (done) => {
+    //             // Assert
+    //             normalUserClientDriver.handleSignedInEvent(() => {
+    //                 done();
+    //             });
+    //         });
+    //     });
 
-                            done();
-                        }
-                    }
-                });
-            });
+    //     describe("when user joins game", () => {
+    //         // Arrange
+    //         const expectedGameConfigs = {
+    //             minBet: 1,
+    //             maxBet: 2000,
+    //             odds: { big: 1.97, small: 1.97 },
+    //         };
 
-            it("should return user information", (done) => {
-                // Act
-                normalUserClientDriver.sendInGameEvent();
+    //         const expectedUser = {
+    //             UID: 1,
+    //             avatarId: 1,
+    //             currency: "$US",
+    //             name: "NormalUser",
+    //             rate: 1,
+    //             red: 25000,
+    //         };
 
-                // Assert
-                normalUserClientDriver.handleInGameEvent((inGameData) => {
-                    if (inGameData?.user?.UID) {
-                        expect(inGameData.user).toStrictEqual(expectedUser);
+    //         const expectedRoundHistory = [
+    //             {
+    //                 roundId: 823211,
+    //                 result: { dice1: 1, dice2: 5, dice3: 3 },
+    //                 settlementResult: { big: false, small: true },
+    //             },
+    //             {
+    //                 roundId: 823210,
+    //                 result: { dice1: 4, dice2: 4, dice3: 1 },
+    //                 settlementResult: { big: false, small: true },
+    //             },
+    //             {
+    //                 roundId: 823209,
+    //                 result: { dice1: 1, dice2: 2, dice3: 6 },
+    //                 settlementResult: { big: false, small: true },
+    //             },
+    //         ];
 
-                        done();
-                    }
-                });
-            });
+    //         it("should return game configuration (odds, min bet, max bet)", (done) => {
+    //             // Act
+    //             normalUserClientDriver.sendInGameEvent();
 
-            it("should return old round history", (done) => {
-                // Act
-                normalUserClientDriver.sendInGameEvent();
+    //             // Assert
+    //             normalUserClientDriver.handleInGameEvent((inGameData) => {
+    //                 if (inGameData?.gameConfigs) {
+    //                     if (inGameData.gameConfigs) {
+    //                         expect(inGameData.gameConfigs.minBet).toEqual(expectedGameConfigs.minBet);
+    //                         expect(inGameData.gameConfigs.maxBet).toEqual(expectedGameConfigs.maxBet);
+    //                         expect(inGameData.gameConfigs.odds).toStrictEqual(expectedGameConfigs.odds);
 
-                // Assert
-                normalUserClientDriver.handleInGameEvent((inGameData) => {
-                    if (inGameData?.roundHistory) {
-                        expect(inGameData.roundHistory).toStrictEqual(expectedRoundHistory);
-                        done();
-                    }
-                });
-            });
-        });
+    //                         done();
+    //                     }
+    //                 }
+    //             });
+    //         });
 
-        describe("when user get bet history", () => {
-            it("should return bet history", (done) => {
-                // Arrange
-                const expectedData = [
-                    {
-                        refund: 0,
-                        baseRefund: 0,
-                        win: false,
-                        betwin: 0,
-                        baseBetWin: 0,
-                        totalWin: 0,
-                        baseTotalWin: 0,
-                        totalAmount: 0,
-                        phien: 823211,
-                        currency: "$US",
-                        amount: 100,
-                        baseAmount: 100,
-                        choice: "small",
-                        name: "NormalUser",
-                        partnerId: "dummy-partner-id",
-                        rate: 1,
-                        betLogDetails: [],
-                    },
-                    {
-                        refund: 0,
-                        baseRefund: 0,
-                        win: false,
-                        betwin: 0,
-                        baseBetWin: 0,
-                        totalWin: 0,
-                        baseTotalWin: 0,
-                        totalAmount: 0,
-                        phien: 823211,
-                        currency: "$US",
-                        amount: 100,
-                        baseAmount: 100,
-                        choice: "big",
-                        name: "NormalUser",
-                        partnerId: "dummy-partner-id",
-                        rate: 1,
-                        betLogDetails: [],
-                    },
-                ];
+    //         it("should return user information", (done) => {
+    //             // Act
+    //             normalUserClientDriver.sendInGameEvent();
 
-                // Act
-                normalUserClientDriver.sendGetHistoryEvent();
+    //             // Assert
+    //             normalUserClientDriver.handleInGameEvent((inGameData) => {
+    //                 if (inGameData?.user?.UID) {
+    //                     expect(inGameData.user).toStrictEqual(expectedUser);
 
-                // Assert
-                normalUserClientDriver.handleGetHistoryEvent((betHistoryData) => {
-                    if (betHistoryData?.history) {
-                        const actualBetLogs = betHistoryData.history.betLogs.map((betLog) => {
-                            delete betLog.result;
-                            delete betLog.settlementResult;
-                            return betLog;
-                        });
+    //                     done();
+    //                 }
+    //             });
+    //         });
 
-                        expect(actualBetLogs).toEqual(expectedData);
-                        done();
-                    }
-                });
-            });
-        });
+    //         it("should return old round history", (done) => {
+    //             // Act
+    //             normalUserClientDriver.sendInGameEvent();
 
-        describe("User place bet", () => {
-            // Arrange
-            const betChoice = "big";
-            const amount = 100;
+    //             // Assert
+    //             normalUserClientDriver.handleInGameEvent((inGameData) => {
+    //                 if (inGameData?.roundHistory) {
+    //                     expect(inGameData.roundHistory).toStrictEqual(expectedRoundHistory);
+    //                     done();
+    //                 }
+    //             });
+    //         });
+    //     });
 
-            describe("when place bet successful", () => {
-                beforeAll(async (done) => {
-                    // Act
-                    await normalUserClientDriver.sendBetEvent(betChoice, amount);
-                    done();
-                });
+    //     describe("when user get bet history", () => {
+    //         it("should return bet history", (done) => {
+    //             // Arrange
+    //             const expectedData = [
+    //                 {
+    //                     refund: 0,
+    //                     baseRefund: 0,
+    //                     win: false,
+    //                     betwin: 0,
+    //                     baseBetWin: 0,
+    //                     totalWin: 0,
+    //                     baseTotalWin: 0,
+    //                     totalAmount: 0,
+    //                     phien: 823211,
+    //                     currency: "$US",
+    //                     amount: 100,
+    //                     baseAmount: 100,
+    //                     choice: "small",
+    //                     name: "NormalUser",
+    //                     partnerId: "dummy-partner-id",
+    //                     rate: 1,
+    //                     betLogDetails: [],
+    //                 },
+    //                 {
+    //                     refund: 0,
+    //                     baseRefund: 0,
+    //                     win: false,
+    //                     betwin: 0,
+    //                     baseBetWin: 0,
+    //                     totalWin: 0,
+    //                     baseTotalWin: 0,
+    //                     totalAmount: 0,
+    //                     phien: 823211,
+    //                     currency: "$US",
+    //                     amount: 100,
+    //                     baseAmount: 100,
+    //                     choice: "big",
+    //                     name: "NormalUser",
+    //                     partnerId: "dummy-partner-id",
+    //                     rate: 1,
+    //                     betLogDetails: [],
+    //                 },
+    //             ];
 
-                it("should return current user ticket result", (done) => {
-                    const expectedEndBetResponse = {
-                        ownBets: { big: 100 },
-                        endBet: 100,
-                        betChoice: "big",
-                        freeBet: false,
-                        user: { maxBet: 2000, minBet: 1, red: 24250, scoins: 0 },
-                    };
+    //             // Act
+    //             normalUserClientDriver.sendGetHistoryEvent();
 
-                    // Assert
-                    normalUserClientDriver.handleEndBetEvent((endBetData) => {
-                        if (endBetData.endBet) {
-                            expect(endBetData).toStrictEqual(expectedEndBetResponse);
-                            done();
-                        }
-                    });
-                });
+    //             // Assert
+    //             normalUserClientDriver.handleGetHistoryEvent((betHistoryData) => {
+    //                 if (betHistoryData?.history) {
+    //                     const actualBetLogs = betHistoryData.history.betLogs.map((betLog) => {
+    //                         delete betLog.result;
+    //                         delete betLog.settlementResult;
+    //                         return betLog;
+    //                     });
 
-                it("should return ticket status when end game", (done) => {
-                    // Assert
-                    normalUserClientDriver.handleEndBetEvent((endGameResult) => {
-                        if (endGameResult.status) {
-                            done();
-                        }
-                    });
-                });
-            });
-        });
-    });
+    //                     expect(actualBetLogs).toEqual(expectedData);
+    //                     done();
+    //                 }
+    //             });
+    //         });
+    //     });
+
+    //     describe("User place bet", () => {
+    //         // Arrange
+    //         const betChoice = "big";
+    //         const amount = 100;
+
+    //         describe("when place bet successful", () => {
+    //             beforeAll(async (done) => {
+    //                 // Act
+    //                 await normalUserClientDriver.sendBetEvent(betChoice, amount);
+    //                 done();
+    //             });
+
+    //             it("should return current user ticket result", (done) => {
+    //                 const expectedEndBetResponse = {
+    //                     ownBets: { big: 100 },
+    //                     endBet: 100,
+    //                     betChoice: "big",
+    //                     freeBet: false,
+    //                     user: { maxBet: 2000, minBet: 1, red: 24250, scoins: 0 },
+    //                 };
+
+    //                 // Assert
+    //                 normalUserClientDriver.handleEndBetEvent((endBetData) => {
+    //                     if (endBetData.endBet) {
+    //                         expect(endBetData).toStrictEqual(expectedEndBetResponse);
+    //                         done();
+    //                     }
+    //                 });
+    //             });
+
+    //             it("should return ticket status when end game", (done) => {
+    //                 // Assert
+    //                 normalUserClientDriver.handleEndBetEvent((endGameResult) => {
+    //                     if (endGameResult.status) {
+    //                         done();
+    //                     }
+    //                 });
+    //             });
+    //         });
+    //     });
+    // });
 });
 
 const initUserSession = (user) => {
@@ -322,4 +585,15 @@ const initUserSession = (user) => {
         username: `${user.memberId}_${user.memberName}`,
         browserUserAgent: "browser-user-agent",
     };
+};
+
+const getTimeOutToBet = (remainingTime, durations) => {
+    let timeout = 0;
+    if (remainingTime <= durations.lockingBet) {
+        timeout = durations.wholeRound - durations.placingBets + remainingTime + 4;
+    } else if (remainingTime > durations.placingBets) {
+        timeout = durations.wholeRound - durations.placingBets + 4;
+    }
+
+    return timeout;
 };

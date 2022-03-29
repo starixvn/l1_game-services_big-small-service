@@ -23,6 +23,6 @@ export const generateResult = () => {
     return { dice1, dice2, dice3 };
 };
 
-export const generateRawResultForMd5 = (roundResult) => {
+export const generateRawResultForHash = (roundResult) => {
     return `{${+roundResult.dice1},${+roundResult.dice2},${+roundResult.dice3}}`;
 };
