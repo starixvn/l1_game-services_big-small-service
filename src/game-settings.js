@@ -1,6 +1,7 @@
 export default {
     id: 1,
-    name: "taixiu",
+    name: "BigSmall",
+    configName: "taixiu",
     durations: {
         wholeRound: 61,
         placingBets: 50,
