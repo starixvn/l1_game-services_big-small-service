@@ -1,12 +1,14 @@
+import gameSetting from "./../../../src/game-settings";
+
 const game = {
-    id: 1,
-    name: "taixiu",
+    id: gameSetting.id,
+    name: gameSetting.name.toLowerCase(),
 };
 
 const currencyData = { code: "USD", name: "$US" };
 
 const socketOptions = {
-    socketUri: "http://localhost:5001/user/taixiu",
+    socketUri: `http://localhost:5001/user/${gameSetting.name.toLowerCase()}`,
     gameName: game.name,
     proxyRoute: "/socket.io",
 };
