@@ -2,7 +2,7 @@ import gameSetting from "./../../../src/game-settings";
 
 const game = {
     id: gameSetting.id,
-    name: gameSetting.name.toLowerCase(),
+    name: gameSetting.name,
 };
 
 const currencyData = { code: "USD", name: "$US" };
