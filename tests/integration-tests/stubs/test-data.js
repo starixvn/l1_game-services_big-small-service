@@ -41,6 +41,7 @@ const userBetData = (uid) => {
             siteId: "111",
             thanhtoan: true,
             win: false,
+            roundId: 823211,
         },
         {
             freeBet: false,
@@ -61,6 +62,7 @@ const userBetData = (uid) => {
             siteId: "111",
             thanhtoan: true,
             win: false,
+            roundId: 823211,
         },
     ];
 };
