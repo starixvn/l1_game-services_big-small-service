@@ -11,7 +11,7 @@ import {
     normalUser,
 } from "sc-game-service-integration-utils";
 
-import configs from "../../../src/app-configs";
+import configs from "../../../src/app-configs.IGT";
 import { BigSmallBets, BigSmallRounds } from "../../../src/models";
 import { currencyData, game, gameConfig, rounds, userBetData } from "./test-data";
 
@@ -27,6 +27,8 @@ const clearAllData = async () => {
     for (const collection of collections) {
         await collection.remove();
     }
+
+    console.log("clear all data");
 };
 
 const createTestData = async () => {

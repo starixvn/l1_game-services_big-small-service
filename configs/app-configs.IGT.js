@@ -21,7 +21,7 @@ export default {
             secret: "gameservices@20luminet&",
         },
         requestTimeout: 10000,
-        useAuthenticate: true,
+        useAuthenticate: false,
     },
     socketOptions: {
         pingInterval: 60 * 1000,
@@ -41,9 +41,9 @@ export default {
         },
     },
     sentry: {
-        sentryUrl: "",
+        sentryUrl: "https://13f39b8359404ed5aec23655e64ccf78@sentry.lumigame.com/2",
         logIdentifier: "big-small",
-        env: "LOCAL",
+        env: "IGT",
     },
     authenticateSettings: {
         audiences: ["api", "admin-api"],
@@ -67,4 +67,5 @@ export default {
         enable: true,
         secretKey: "6c1f0f28-70f2-46ae-b031-22624a6cd8df",
     },
+    enableMsgpackParser: false,
 };
