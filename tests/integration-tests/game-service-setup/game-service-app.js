@@ -1,5 +1,5 @@
 import { Core } from "sc-game-base";
-import { initAPIStub } from "sc-game-service-integration-utils";
+import { initAPIStub, stubUserService } from "sc-game-service-integration-utils";
 import { GameData } from "sc-pool-betting-game-base";
 
 import appConfigs from "../../../src/app-configs.IGT";
@@ -10,6 +10,7 @@ import BigSmallDefinition from "../../../src/big-small-definition";
 
 const run = async () => {
     initAPIStub(appConfigs.apiSettings.apiUrl);
+    stubUserService(appConfigs);
     const gameData = new GameData(gameSettings.durations.wholeRound);
     const definition = new BigSmallDefinition(gameSettings, generateResult, getSettlementResult, generateRawResultForHash);
     const container = new BigSmallContainerRegistry().register(appConfigs, definition, gameData);
