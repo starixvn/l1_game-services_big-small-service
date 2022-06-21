@@ -13,9 +13,16 @@ export default {
         placeBetTimeout: 4000,
         enabledApiLogs: true,
     },
+    authenticateSettings: {
+        url: "http://l1_auth_api_local_2:5000",
+        id: "game-services",
+        secret: "gameservices@20luminet&",
+        requestTimeout: 10000,
+        useAuthenticate: true,
+        audiences: ["api", "admin-api"],
+    },
     userServiceSettings: {
         url: "https://l1-proxy2.lumigame.com/user",
-        requestTimeout: 10000,
     },
     socketOptions: {
         pingInterval: 60 * 1000,
@@ -38,9 +45,6 @@ export default {
         sentryUrl: "https://304fcee64d694a7ca7a0b15d9c8de27d@sentry.lumigame.com/2",
         logIdentifier: "big-small",
         env: "LOCAL_2",
-    },
-    authenticateSettings: {
-        audiences: ["api", "admin-api"],
     },
     adminSecretKey: "asWDEerfOIdgsdqRTFabvmgh",
     enableCorsWs: false,
