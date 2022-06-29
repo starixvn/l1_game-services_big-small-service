@@ -13,16 +13,16 @@ export default {
         placeBetTimeout: 4500,
         enableApiLogs: true,
     },
-    mainServerApiSettings: {
-        url: "http://localhost:8080/api",
-        auth: {
-            url: "http://auth.lumigame.com",
-            id: "game-services",
-            secret: "gameservices@20luminet&",
-        },
+    authenticateSettings: {
+        url: "http://auth.lumigame.com",
+        id: "game-services",
+        secret: "gameservices@20luminet&",
         requestTimeout: 10000,
-        placeBetTimeout: 4500,
-        useAuthenticate: true,
+        useAuthenticate: false,
+        audiences: ["api", "admin-api"],
+    },
+    userServiceSettings: {
+        url: "http://127.0.0.1:5000",
     },
     socketOptions: {
         pingInterval: 60 * 1000,
@@ -34,7 +34,7 @@ export default {
     database: {
         url: "mongodb://localhost:27017",
         options: {
-            dbName: "game-service",
+            dbName: "minigame",
             useNewUrlParser: true,
             useUnifiedTopology: true,
             auto_reconnect: true,
@@ -44,9 +44,6 @@ export default {
         sentryUrl: "https://f48b8368b274490db3e4eaa01ba2b36b@sentry.lumigame.com/6",
         logIdentifier: "big-small",
         env: "LOCAL",
-    },
-    authenticateSettings: {
-        audiences: ["api", "admin-api"],
     },
     adminSecretKey: "asWDEerfOIdgsdqRTFabvmgh",
     enableCorsWs: false,
