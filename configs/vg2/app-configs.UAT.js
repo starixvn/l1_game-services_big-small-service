@@ -2,18 +2,19 @@ export default {
     hostingPort: 5000,
     apiSettings: {
         enabledApi: true,
-        apiUrl: "http://l1_game_api_sit:5000",
-        authUrl: "http://l1_auth_api_sit:5000",
+        apiUrl: "http://l2_game_api_uat:5000",
+        authUrl: "http://l2_auth_api_uat:5000",
         client: {
             id: "game-server",
             secret: "gameserver@20luminet&",
         },
         useAuthenticate: true,
-        requestTimeout: 10000,
+        placeBetTimeout: 4000,
+        requestTimeout: 10000, // 10s
         enabledApiLogs: true,
     },
     authenticateSettings: {
-        url: "http://l1_auth_api_sit:5000",
+        url: "http://l2_auth_api_uat:5000",
         id: "game-services",
         secret: "gameservices@20luminet&",
         requestTimeout: 10000,
@@ -21,7 +22,7 @@ export default {
         audiences: ["api", "admin-api"],
     },
     userServiceSettings: {
-        url: "http://l1_user_service_sit:5000",
+        url: "http://l2_user_service_uat:5000",
     },
     socketOptions: {
         pingInterval: 60 * 1000,
@@ -32,33 +33,41 @@ export default {
     },
     enabledLogs: true,
     database: {
-        url: "mongodb://lmn_backend:LmnBackend%40517@10.99.99.187:27301/?replicaSet=SabaSIT",
+        url: "mongodb://lmn_backend:LmnBackend%4022027@10.99.99.187:37201/?replicaSet=SabaL2UAT&appName=Sedie",
         options: {
             dbName: "minigame",
             useNewUrlParser: true,
             useUnifiedTopology: true,
+            auto_reconnect: true,
         },
     },
     sentry: {
-        sentryUrl: "http://52368c4019044019885440599c180bda@10.2.189.51:9009/24",
+        sentryUrl: "http://8ac47fca6d3e4a41908896a64ef201ac@10.2.189.51:9009/53",
         logIdentifier: "big-small",
-        env: "SIT",
+        env: "UAT",
     },
     adminSecretKey: "asWDEerfOIdgsdqRTFabvmgh",
     enableCorsWs: true,
     corsUrls: [
-        "http://l1sit.sgamesuat.com",
-        "https://l1sit.sgamesuat.com",
-        "https://l1sitadm.sgamesuat.com",
-        "http://l1sitadm.sgamesuat.com",
-        "http://l1sitm.sgamesuat.com",
-        "https://l1sitm.sgamesuat.com",
-        "http://l1minisit.sgamesuat.com",
-        "https://l1minisit.sgamesuat.com",
+        "http://l2uat.sgamesuat.com",
+        "https://l2uat.sgamesuat.com",
+        "http://l2uatadm.sgamesuat.com",
+        "https://l2uatadm.sgamesuat.com",
+        "http://l2uatm.sgamesuat.com",
+        "https://l2uatm.sgamesuat.com",
     ],
     metrics: {
         enable: true,
         secretKey: "6c1f0f28-70f2-46ae-b031-22624a6cd8df",
     },
     enableMsgpackParser: true,
+    chatBotSettings: {
+        url: "https://bot.nexdev.net/skynex/api/messages/",
+        token: "0A40aOc7CtpzjbBSJu8KNWQRoXyjRvf9",
+        requestTimeout: 5000,
+        conversationIds: {
+            boostedOdds: -1001774561372,
+        },
+    },
+    enabledBoostedOdds: true,
 };

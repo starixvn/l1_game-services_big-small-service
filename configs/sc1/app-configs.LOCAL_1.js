@@ -2,8 +2,8 @@ export default {
     hostingPort: 5000,
     apiSettings: {
         enabledApi: true,
-        apiUrl: "http://l1_game_api_local:5000",
-        authUrl: "http://l1_auth_api_local:5000",
+        apiUrl: "http://l1_game_api_local_1:5000",
+        authUrl: "http://l1_auth_api_local_1:5000",
         client: {
             id: "game-server",
             secret: "gameserver@20luminet&",
@@ -14,7 +14,7 @@ export default {
         enabledApiLogs: true,
     },
     authenticateSettings: {
-        url: "http://l1_auth_api_local:5000",
+        url: "http://l1_auth_api_local_1:5000",
         id: "game-services",
         secret: "gameservices@20luminet&",
         requestTimeout: 10000,
@@ -22,7 +22,7 @@ export default {
         audiences: ["api", "admin-api"],
     },
     userServiceSettings: {
-        url: "https://l1-proxy.lumigame.com/user",
+        url: "https://l1-proxy1.lumigame.com/user",
     },
     socketOptions: {
         pingInterval: 60 * 1000,
@@ -33,7 +33,7 @@ export default {
     },
     enabledLogs: true,
     database: {
-        url: "mongodb://lmn_backend:LmnBackend@10.10.50.12:39100,10.10.50.13:39100,10.10.50.14:39100/?replicaSet=L1Local",
+        url: "mongodb://lmn_backend:LmnBackend@10.10.50.12:39101,10.10.50.13:39101,10.10.50.14:39101/?replicaSet=L1pLocal&appName=Sedie",
         options: {
             dbName: "minigame",
             useNewUrlParser: true,
@@ -44,7 +44,7 @@ export default {
     sentry: {
         sentryUrl: "https://13f39b8359404ed5aec23655e64ccf78@sentry.lumigame.com/2",
         logIdentifier: "big-small",
-        env: "LOCAL",
+        env: "LOCAL-1",
     },
     adminSecretKey: "asWDEerfOIdgsdqRTFabvmgh",
     enableCorsWs: false,
@@ -52,18 +52,26 @@ export default {
         "http://localhost:7456",
         "http://localhost:7000",
         "http://localhost:3000",
-        "http://games.lumigame.com",
-        "https://games.lumigame.com",
-        "http://admin.lumigame.com",
-        "https://admin.lumigame.com",
-        "http://l1-m.lumigame.com",
-        "https://l1-m.lumigame.com",
-        "http://l1-mini.lumigame.com",
-        "https://l1-mini.lumigame.com",
+        "http://l1-games1.lumigame.com",
+        "https://l1-games1.lumigame.com",
+        "http://l1-admin1.lumigame.com",
+        "http://l1-m1.lumigame.com",
+        "https://l1-m1.lumigame.com",
+        "http://l1-mini1.lumigame.com",
+        "https://l1-mini1.lumigame.com",
     ],
     metrics: {
         enable: true,
         secretKey: "6c1f0f28-70f2-46ae-b031-22624a6cd8df",
     },
     enableMsgpackParser: false,
+    chatBotSettings: {
+        url: "https://bot.nexdev.net/skynex/api/messages/",
+        token: "0A40aOc7CtpzjbBSJu8KNWQRoXyjRvf9",
+        requestTimeout: 5000,
+        conversationIds: {
+            boostedOdds: -1001516573929,
+        },
+    },
+    enabledBoostedOdds: true,
 };

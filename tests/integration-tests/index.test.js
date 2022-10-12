@@ -2,10 +2,11 @@ import getHistoryTest from "./get-history.test";
 import inGameTest from "./in-game.test";
 import placeBetTest from "./place-bet.test";
 import { startServiceProcess, startSetupDataProcess } from "./stubs/test-jobs";
+import { boostedOddsTest } from "./boosted-odds.test";
 
 let processStartService;
 
-const JEST_ASSERT_WAITING_RESPONSE_TIMEOUT = 100000;
+const JEST_ASSERT_WAITING_RESPONSE_TIMEOUT = 140000;
 
 beforeAll((done) => {
     jest.setTimeout(JEST_ASSERT_WAITING_RESPONSE_TIMEOUT);
@@ -24,6 +25,7 @@ afterAll(() => {
     processStartService.kill();
 });
 
+boostedOddsTest();
 inGameTest();
 getHistoryTest();
 placeBetTest();

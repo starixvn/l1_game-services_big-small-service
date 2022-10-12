@@ -24,7 +24,6 @@ const gameConfig = {
 const userBetData = (uid) => {
     return [
         {
-            phien: 823211,
             uid: uid,
             betwin: 0,
             currency: "$US",
@@ -34,18 +33,17 @@ const userBetData = (uid) => {
             baseRefund: 0,
             baseTotalWin: 0,
             choice: "big",
-            memberId: 1,
+            playerId: 1,
             name: "NormalUser",
-            partnerId: "dummy-partner-id",
+            operatorId: "dummy-operator-id",
             rate: 1,
             siteId: "111",
-            thanhtoan: true,
             win: false,
             roundId: 823211,
+            paid: true,
         },
         {
             freeBet: false,
-            phien: 823211,
             uid: uid,
             betwin: 0,
             currency: "$US",
@@ -55,14 +53,14 @@ const userBetData = (uid) => {
             baseRefund: 0,
             baseTotalWin: 0,
             choice: "small",
-            memberId: 4,
+            playerId: 4,
             name: "NormalUser",
-            partnerId: "dummy-partner-id",
+            operatorId: "dummy-operator-id",
             rate: 1,
             siteId: "111",
-            thanhtoan: true,
             win: false,
             roundId: 823211,
+            paid: true,
         },
     ];
 };
@@ -85,4 +83,15 @@ const rounds = [
     },
 ];
 
-export { game, currencyData, socketOptions, gameConfig, rounds, userBetData };
+const promotions = [
+    {
+        gameId: gameSetting.id,
+        startDateTime: new Date(new Date().setSeconds(new Date().getSeconds() - 1)),
+        endDateTime: new Date(new Date().setSeconds(new Date().getSeconds() + 40)),
+        isDaily: false,
+        odds: { big: 1.98, small: 1.98 },
+        status: "enabled",
+    },
+];
+
+export { game, currencyData, socketOptions, gameConfig, rounds, userBetData, promotions };
