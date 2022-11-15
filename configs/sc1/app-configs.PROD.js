@@ -84,4 +84,5 @@ export default {
         },
     },
     enabledBoostedOdds: true,
+    balancedBotBettingTime: 10,
 };

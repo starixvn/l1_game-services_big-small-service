@@ -19,6 +19,10 @@ const gameConfig = {
     minBet: 1,
     maxBet: 2000,
     odds: { big: 1.97, small: 1.97 },
+    minbet: 1,
+    maxbet: 2000,
+    smartBotGroupRatio: 0.99,
+    botenabled: true,
 };
 
 const userBetData = (uid) => {
