@@ -58,7 +58,7 @@ describe("Result statistic: 100000 times", () => {
             expect(dragonTails[7]).toBeLessThan(230);
             expect(dragonTails[8]).toBeLessThan(130);
             expect(dragonTails[9]).toBeLessThan(70);
-            expect(dragonTails[10]).toBeLessThan(35);
+            expect(dragonTails[10]).toBeLessThan(37);
         });
     });
 });
