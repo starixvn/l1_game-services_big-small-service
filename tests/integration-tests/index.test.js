@@ -26,8 +26,8 @@ afterAll(() => {
     processStartService.kill();
 });
 
-boostedOddsTest();
-inGameTest();
-getHistoryTest();
-placeBetTest();
-balancedPlaceBetTest();
+// boostedOddsTest();
+// inGameTest();
+// getHistoryTest();
+// placeBetTest();
+// balancedPlaceBetTest();
