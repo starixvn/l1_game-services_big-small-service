@@ -27,7 +27,7 @@ afterAll(() => {
 });
 
 // boostedOddsTest();
-// inGameTest();
+inGameTest();
 // getHistoryTest();
 // placeBetTest();
 // balancedPlaceBetTest();
