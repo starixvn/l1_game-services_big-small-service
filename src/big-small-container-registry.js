@@ -1,7 +1,7 @@
 import { asValue, asClass } from "awilix";
 import { ContainerRegistry } from "sc-pool-betting-game-base";
 import BigSmallPlaceBetConsumer from "./consumers/big-small-place-bet-consumer";
-
+import { BigSmallProcessBetQueue } from "./crons";
 import { BigSmallBetLogs, BigSmallBets, BigSmallResults, BigSmallRounds } from "./models";
 
 export default class BigSmallContainerRegistry extends ContainerRegistry {
@@ -21,6 +21,14 @@ export default class BigSmallContainerRegistry extends ContainerRegistry {
 
         this.container.register({
             placeBetConsumer: asClass(BigSmallPlaceBetConsumer).singleton(),
+        });
+    }
+
+    registerCrons() {
+        super.registerCrons();
+
+        this.container.register({
+            processBetQueue: asClass(BigSmallProcessBetQueue).singleton().proxy(),
         });
     }
 }
